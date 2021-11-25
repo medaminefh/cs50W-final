@@ -13,10 +13,60 @@ def index(req):
 
 
 def tweets(req):
+    try:
+        tweets = Post.objects.all()
+
+        serialize = []
+
+        for tweet in tweets:
+            serialize.append(tweet)
+
+        return JsonResponse({"msg": "Succeed", "tweets": serialize})
+    except Exception as e:
+        print(f'tweets err : {e}')
+
+        return JsonResponse({"err": "Oops something went wrong!"})
     return JsonResponse({"msg": "Hello Tweets"})
 
 
 def tweet(req):
+    if req.user.is_authenticated:
+        if req.method == "POST":
+            try:
+
+                body_unicode = req.body.decode('utf-8')
+                body = json.loads(body_unicode)
+
+                content = body['content']
+                user = req.user
+                post = Post.objects.create(user=user, content=content)
+                post.save()
+                return JsonResponse({"tweet": {"content": post.content, "user": user.username}})
+            except Exception as e:
+                print(f'tweet Post error : {e}')
+                return JsonResponse({"err": "Something wrong happened"})
+        if req.method == "PUT":
+            try:
+                body_unicode = req.body.decode('utf-8')
+                body = json.loads(body_unicode)
+
+                content = body['content']
+                id = body['id']
+
+                tweet = Post.objects.get(pk=id)
+                user = req.user
+
+                tweet.content = content
+                tweet.save(update_fields=["content"])
+
+                return JsonResponse({"msg": "Updated!", "tweet": {"content": tweet.content}})
+
+            except Exception as e:
+                print(f'tweet Put error :{e}')
+                return JsonResponse({"err": "Oops something went wrong!"})
+
+        return JsonResponse({"msg": "Hello Tweet"})
+
     return JsonResponse({"msg": "Hello Tweet"})
 
 
