@@ -64,7 +64,21 @@ def tweet(req):
             except Exception as e:
                 print(f'tweet Put error :{e}')
                 return JsonResponse({"err": "Oops something went wrong!"})
+        if req.method == "DELETE":
+            try:
+                body_unicode = req.body.decode('utf-8')
+                body = json.loads(body_unicode)
 
+                id = body['id']
+
+                tweet = Post.objects.get(pk=id)
+                tweet.delete()
+
+                return JsonResponse({"msg": "Deleted!"})
+
+            except Exception as e:
+                print(f'tweet Delete error :{e}')
+                return JsonResponse({"err": "Oops something went wrong!"})
         return JsonResponse({"msg": "Hello Tweet"})
 
     return JsonResponse({"msg": "Hello Tweet"})
