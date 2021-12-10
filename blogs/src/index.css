@@ -1,0 +1,235 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato&family=Merriweather:wght@300;400;500&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400&display=swap");
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+  color: #333333;
+}
+
+p {
+  margin: 15px 0;
+  line-height: 1.8;
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+}
+
+img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+header {
+  position: relative;
+  z-index: 2;
+  background: steelblue;
+  color: #fff;
+  padding: 5px;
+  margin-bottom: 40px;
+}
+
+header a {
+  color: #fff;
+}
+
+footer {
+  position: relative;
+  bottom: 0;
+  padding: 2em;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  overflow: auto;
+  padding: 0 10px;
+}
+
+.btn {
+  display: inline-block;
+  background: steelblue;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+.btn:hover {
+  transform: scale(0.98);
+}
+
+.btn-back {
+  background: #f4f4f4;
+  color: #333333;
+  margin-bottom: 20px;
+}
+
+.posts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.card {
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.card img {
+  pointer-events: none;
+}
+
+.card-page {
+  padding: 15px 30px;
+}
+
+.post-title {
+  margin: 10px 0;
+}
+
+.post-date {
+  color: #383838c5;
+  font-family: "Merriweather", sans-serif;
+  margin-bottom: 20px;
+}
+
+.post-body ul,
+ol {
+  font-size: 110%;
+  line-height: 2.3;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.post-body pre {
+  background: #f4f4f4;
+  padding: 20px;
+  margin: 20px 0;
+  line-height: 2.3;
+}
+
+@media (max-width: 500px) {
+  .posts {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* For Icons */
+.bg-HtmlRed {
+  background-color: #f53900;
+}
+.bg-CssBlue {
+  background-color: #2965f1;
+}
+.bg-JsYellow {
+  background-color: #f7df1e;
+}
+
+.bg-ReactBlue {
+  background-color: #61daf6;
+}
+
+.bg-pistach {
+  background-color: #6ecb63;
+}
+
+.bg-darkGreen {
+  background-color: #127719;
+}
+
+.bg-lightBlue {
+  background-color: #a2cdcd;
+}
+.bg-darkBlue {
+  background-color: #316b83;
+}
+.bg-darkPurple {
+  background-color: #610094;
+}
+.bg-lightPurple {
+  background-color: #ae00fb;
+}
+
+ul.social__media {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  margin-top: 15px;
+}
+ul.social__media li {
+  list-style-type: none;
+  display: inline-block;
+  margin-right: 15px;
+}
+ul.social__media li a {
+  background-color: transparent;
+  font-size: 30px;
+  text-align: center;
+}
+.errMsg {
+  background: rgba(214, 10, 10, 0.712);
+  color: #fff9;
+  text-align: center;
+  padding: 10px 0;
+  letter-spacing: 1.3px;
+}
+
+.successMsg {
+  background: rgba(9, 158, 54, 0.664);
+  color: #fff9;
+  text-align: center;
+  padding: 10px 0;
+  letter-spacing: 1.3px;
+}
+
+.card.private {
+  position: relative;
+}
+
+.card.private::before {
+  content: "";
+  position: absolute;
+  top: -1em;
+  right: 1em;
+  width: 1.5em;
+  height: 2em;
+  z-index: -1;
+  background-color: rgba(255, 99, 71, 0.712);
+}
+
+.card.public {
+  position: relative;
+}
+
+.card.public::before {
+  content: "";
+  position: absolute;
+  top: -1em;
+  right: 1em;
+  width: 1.5em;
+  height: 2em;
+  z-index: -1;
+  background-color: rgba(26, 200, 41, 0.767);
+}
