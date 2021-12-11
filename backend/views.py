@@ -1,8 +1,9 @@
 import json
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, ResponseHeaders
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from .models import User, Post, Like, Comment, Count
+from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
@@ -15,73 +16,87 @@ def index(req):
 def tweets(req):
     try:
         tweets = Post.objects.all()
-
-        serialize = []
-
+        serializer = []
         for tweet in tweets:
-            serialize.append(tweet)
-
-        return JsonResponse({"msg": "Succeed", "tweets": serialize})
+            serializer.append({"userId":tweet.user.username,'postId':tweet.id,'content':tweet.content,"createdAt":tweet.created_at,"updatedAt":tweet.updated_at})
+    
+        return JsonResponse({"msg": "Succeed", "tweets": serializer})
     except Exception as e:
         print(f'tweets err : {e}')
 
         return JsonResponse({"err": "Oops something went wrong!"})
-    return JsonResponse({"msg": "Hello Tweets"})
 
-
+@csrf_exempt
 def tweet(req):
-    if req.user.is_authenticated:
-        if req.method == "POST":
-            try:
+    
+    if req.method == "POST":
+        try:
+            body_unicode = req.body.decode('utf-8')
+            body = json.loads(body_unicode)
 
-                body_unicode = req.body.decode('utf-8')
-                body = json.loads(body_unicode)
+            content = body['content']
+            userId = body["userId"]
+            user = User.objects.get(pk=userId)
+            post = Post.objects.create(user=user, content=content)
+            post.save()
+            return JsonResponse({"tweet": {"content": post.content, "user": user.username}})
+        except Exception as e:
+            print(f'tweet Post error : {e}')
+            return JsonResponse({"err": "Something wrong happened"})
+    if req.method == "PUT":
+        try:
+            body_unicode = req.body.decode('utf-8')
+            body = json.loads(body_unicode)
 
-                content = body['content']
-                user = req.user
-                post = Post.objects.create(user=user, content=content)
-                post.save()
-                return JsonResponse({"tweet": {"content": post.content, "user": user.username}})
-            except Exception as e:
-                print(f'tweet Post error : {e}')
-                return JsonResponse({"err": "Something wrong happened"})
-        if req.method == "PUT":
-            try:
-                body_unicode = req.body.decode('utf-8')
-                body = json.loads(body_unicode)
+            content = body['content']
+            postId = body['postId']
+            userId = body['userId']
+            print(body)
+            tweet = Post.objects.get(pk=postId)
+            user = User.objects.get(pk=userId)
 
-                content = body['content']
-                id = body['id']
+            if tweet.user != user:
+                print(tweet.user,user)
+                return JsonResponse({"msg":"Not Allowed to modify others tweets"})
 
-                tweet = Post.objects.get(pk=id)
-                user = req.user
+            tweet.content = content
+            tweet.save(update_fields=["content","updated_at"])
 
-                tweet.content = content
-                tweet.save(update_fields=["content"])
+            return JsonResponse({"msg": "Updated!", "tweet": {"content": tweet.content}})
 
-                return JsonResponse({"msg": "Updated!", "tweet": {"content": tweet.content}})
+        except Exception as e:
+            print(f'tweet Put error :{e}')
+            return JsonResponse({"err": "Oops something went wrong!"})
+    if req.method == "DELETE":
 
-            except Exception as e:
-                print(f'tweet Put error :{e}')
-                return JsonResponse({"err": "Oops something went wrong!"})
-        if req.method == "DELETE":
-            try:
-                body_unicode = req.body.decode('utf-8')
-                body = json.loads(body_unicode)
+        try:
+            body_unicode = req.body.decode('utf-8')
+            body = json.loads(body_unicode)
 
-                id = body['id']
+            postId = body['postId']
 
-                tweet = Post.objects.get(pk=id)
-                tweet.delete()
+            userId = body['userId']
 
-                return JsonResponse({"msg": "Deleted!"})
+            user = User.objects.get(pk=userId)
 
-            except Exception as e:
-                print(f'tweet Delete error :{e}')
-                return JsonResponse({"err": "Oops something went wrong!"})
-        return JsonResponse({"msg": "Hello Tweet"})
 
-    return JsonResponse({"msg": "Hello Tweet"})
+            tweet = Post.objects.get(pk=postId)
+            if tweet.user != user :
+                return JsonResponse({"msg":"Not allowed to delete others posts"})
+            tweet.delete()
+
+            return JsonResponse({"msg": "Deleted!"})
+
+        except Exception as e:
+            print(f'tweet Delete error :{e}')
+            return JsonResponse({"err": "Oops something went wrong!"})
+    
+    body_unicode = req.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    postId = body['postId']
+    post = Post.objects.get(pk=postId)
+    
+    return JsonResponse({"content": post.content,"user":post.user.username})
 
 
 @csrf_exempt
