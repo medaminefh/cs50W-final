@@ -7,4 +7,5 @@ urlpatterns = [
     path('login/', views.login_view, name="login"),
     path('tweets/', views.tweets, name="tweets"),
     path('tweet/', views.tweet, name="tweet"),
+    path('tweet/<str:postId>',views.twt,name="twt")
 ]

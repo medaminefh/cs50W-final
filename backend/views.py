@@ -1,9 +1,8 @@
 import json
-from django.http.response import JsonResponse, ResponseHeaders
+from django.http.response import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from .models import User, Post, Like, Comment, Count
-from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
@@ -18,7 +17,10 @@ def tweets(req):
         tweets = Post.objects.all()
         serializer = []
         for tweet in tweets:
-            serializer.append({"userId":tweet.user.username,'postId':tweet.id,'content':tweet.content,"createdAt":tweet.created_at,"updatedAt":tweet.updated_at})
+            likes = Like.objects.filter(post = tweet)
+            comments = Comment.objects.filter(post = tweet)
+            print(tweet.serialize(),likes,comments)
+            serializer.append(tweet.serialize())
     
         return JsonResponse({"msg": "Succeed", "tweets": serializer})
     except Exception as e:
@@ -43,20 +45,64 @@ def tweet(req):
         except Exception as e:
             print(f'tweet Post error : {e}')
             return JsonResponse({"err": "Something wrong happened"})
+    
+
+
+@csrf_exempt
+def twt(req,postId):
+    if req.method == "POST":
+        try:
+
+            body_unicode = req.body.decode('utf-8')
+            body = json.loads(body_unicode)
+
+            userId = body['userId']
+            comment = body['comment']
+            like = body['like']
+
+            user = User.objects.get(pk = userId)
+
+            tweet = Post.objects.get(pk = postId)
+            
+            if like:
+
+                try:
+                    tweetLiked = Like.objects.get(post=tweet, user=user)
+                except:
+                    tweetLiked = None
+
+                if tweetLiked:
+                    tweetLiked.delete()
+                    return JsonResponse({"Success": "Disliked"}, status=200)
+                
+                tweetLiked = Like.objects.create(user=user, tweet=tweet)
+                tweetLiked.save()
+
+            if comment:
+                comment = Comment.objects.create(user = user , post = tweet, comment=comment)
+                comment.save()
+            
+            
+
+            return JsonResponse({"Success": "Liked Succussfully"}, status=200)
+            pass
+        except Exception as e:
+            print("Err with like or commenting a post",e)
+            return JsonResponse({"err":"Oops something went wrong!"})
     if req.method == "PUT":
         try:
             body_unicode = req.body.decode('utf-8')
             body = json.loads(body_unicode)
 
             content = body['content']
-            postId = body['postId']
             userId = body['userId']
-            print(body)
+
+            
             tweet = Post.objects.get(pk=postId)
             user = User.objects.get(pk=userId)
 
             if tweet.user != user:
-                print(tweet.user,user)
+                
                 return JsonResponse({"msg":"Not Allowed to modify others tweets"})
 
             tweet.content = content
@@ -73,8 +119,6 @@ def tweet(req):
             body_unicode = req.body.decode('utf-8')
             body = json.loads(body_unicode)
 
-            postId = body['postId']
-
             userId = body['userId']
 
             user = User.objects.get(pk=userId)
@@ -90,14 +134,16 @@ def tweet(req):
         except Exception as e:
             print(f'tweet Delete error :{e}')
             return JsonResponse({"err": "Oops something went wrong!"})
-    
-    body_unicode = req.body.decode('utf-8')
-    body = json.loads(body_unicode)
-    postId = body['postId']
-    post = Post.objects.get(pk=postId)
-    
-    return JsonResponse({"content": post.content,"user":post.user.username})
 
+    try :
+
+        tweet = Post.objects.get(pk=postId)
+        tweet = tweet.serialize()
+
+        return JsonResponse({"msg":"succeed",'tweet':tweet})
+    except Exception as e:
+        print("Err with getting the post",e)
+        return JsonResponse({"err":"No post with that Id"})
 
 @csrf_exempt
 def register(req):
