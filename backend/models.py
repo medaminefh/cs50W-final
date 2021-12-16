@@ -6,7 +6,11 @@ class Post(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255,blank=False,default="Hello World!")
-    content = models.TextField()
+    short = models.TextField(blank=False)
+    #categories = models.
+    long = models.TextField(blank=False)
+    private = models.BooleanField(default=True,blank=False)
+    img_url: models.CharField(max_length=400,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -14,10 +18,12 @@ class Post(models.Model):
         return {
             "user":self.user.username,
             "title":self.title,
-            "content":self.content,
+            "short":self.short,
+            "long":self.long,
             "createdAt":self.created_at,
             'updatedAt':self.updated_at
         }
+
 
 
 class Count(models.Model):

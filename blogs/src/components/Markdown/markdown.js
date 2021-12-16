@@ -21,7 +21,7 @@ const Markdown = ({ location }) => {
   const token = localStorage.token;
   const SERVER_URL =
     process.env.NODE_ENV === "development"
-      ? "http://localhost:5000/api"
+      ? "http://localhost:8000/"
       : process.env.REACT_APP_SERVER_URL;
   const [title, setTitle] = useState("");
   const [img, setImg] = useState("");

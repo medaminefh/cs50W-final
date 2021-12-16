@@ -19,10 +19,11 @@ def tweets(req):
         for tweet in tweets:
             likes = Like.objects.filter(post = tweet)
             comments = Comment.objects.filter(post = tweet)
-            print(tweet.serialize(),likes,comments)
+            
             serializer.append(tweet.serialize())
     
-        return JsonResponse({"msg": "Succeed", "tweets": serializer})
+        print("hello Tweets",serializer)
+        return JsonResponse({"msg": "Succeed", "blogs": serializer})
     except Exception as e:
         print(f'tweets err : {e}')
 
@@ -30,7 +31,7 @@ def tweets(req):
 
 @csrf_exempt
 def tweet(req):
-    
+    print("hello Tweet")
     if req.method == "POST":
         try:
             body_unicode = req.body.decode('utf-8')
@@ -41,7 +42,7 @@ def tweet(req):
             user = User.objects.get(pk=userId)
             post = Post.objects.create(user=user, content=content)
             post.save()
-            return JsonResponse({"tweet": {"content": post.content, "user": user.username}})
+            return JsonResponse({"blog": {"content": post.content, "user": user.username}})
         except Exception as e:
             print(f'tweet Post error : {e}')
             return JsonResponse({"err": "Something wrong happened"})
@@ -50,6 +51,7 @@ def tweet(req):
 
 @csrf_exempt
 def twt(req,postId):
+    print("hello Twt")
     if req.method == "POST":
         try:
 

@@ -12,7 +12,7 @@ const LandingPage = () => {
   const [filter, setFilter] = useState("");
   const ServerURL =
     process.env.NODE_ENV === "development"
-      ? "http://localhost:5000/api"
+      ? "http://localhost:8000"
       : process.env.REACT_APP_SERVER_URL;
   const [Blogs, setBlogs] = useState([]);
   const [pages, setPages] = useState(1);
@@ -95,7 +95,7 @@ const LandingPage = () => {
   };
 
   useEffect(() => {
-    fetch(ServerURL + "/blogs", { headers: { authorization: token } })
+    fetch(ServerURL + "/blogs/", { headers: { authorization: token } })
       .then((res) => res.json())
       .then((data) => {
         if (data.err) return;
