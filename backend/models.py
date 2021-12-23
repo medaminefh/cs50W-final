@@ -7,7 +7,6 @@ class Post(models.Model):
         User, on_delete=models.CASCADE)
     title = models.CharField(max_length=255,blank=False,default="Hello World!")
     short = models.TextField(blank=False)
-    #categories = models.
     long = models.TextField(blank=False)
     private = models.BooleanField(default=True,blank=False)
     img_url: models.CharField(max_length=400,blank=True)
@@ -16,6 +15,7 @@ class Post(models.Model):
 
     def serialize(self):
         return {
+            "id":self.id,
             "user":self.user.username,
             "title":self.title,
             "short":self.short,

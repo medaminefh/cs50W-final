@@ -12,8 +12,8 @@ const Routing = () => {
       <Switch>
         <ProtectedRoute exact path="/admin" component={Admin} />
         <ProtectedRoute exact path="/blog/create" component={Markdown} />
-        <Route exact path="/blog/:id" component={Blog} />
-        <ProtectedRoute exact path="/blog/:id/edit" component={Markdown} />
+        <Route exact path="/blogs/:id" component={Blog} />
+        <ProtectedRoute exact path="/blogs/:id/edit" component={Markdown} />
         <Route exact path="*" component={LandingPage} />
       </Switch>
     </div>

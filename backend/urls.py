@@ -6,6 +6,6 @@ urlpatterns = [
     path('register/', views.register, name="register"),
     path('login/', views.login_view, name="login"),
     path('blogs/', views.tweets, name="tweets"),
-    path('blog/', views.tweet, name="tweet"),
-    path('blog/<str:postId>',views.twt,name="twt")
+    path('blogs/<str:postId>',views.twt,name="twt")
+    
 ]

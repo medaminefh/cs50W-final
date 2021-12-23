@@ -26,7 +26,6 @@ const Markdown = ({ location }) => {
   const [title, setTitle] = useState("");
   const [img, setImg] = useState("");
   const [short, setShort] = useState("");
-  const [categories, setCategories] = useState("");
   const { state } = location;
   const [blog, setBlog] = useState(state);
   const { id } = useParams();
@@ -41,7 +40,6 @@ const Markdown = ({ location }) => {
           setImg(data.img_url);
           setTitle(data.title);
           setShort(data.short);
-          setCategories(data.categories);
           setMarkdown(data.long);
           setChecked(data.private === true);
         });
@@ -50,7 +48,6 @@ const Markdown = ({ location }) => {
       setImg(state.img_url);
       setTitle(state.title);
       setShort(state.short);
-      setCategories(state.categories);
       setMarkdown(state.long);
       setChecked(state.nonPublic);
     }
@@ -71,44 +68,11 @@ const Markdown = ({ location }) => {
     setShort(e.target.value);
   };
 
-  const handleTags = (e) => {
-    const { value } = e.target;
-    const lastChar = value[value.length - 1];
-    setTag(value.toLowerCase());
-    if (value === "," || value === " ") {
-      setTag("");
-      return;
-    }
-    if (lastChar === "," || lastChar === " ") {
-      setCategories((prev) => {
-        if (prev.includes(tag)) return prev;
-        return [...prev, tag];
-      });
-      setCategories((prev) => [...new Set(prev)]);
-      setCategories((prev) => prev.filter((a) => a !== " "));
-      setTag("");
-    }
-  };
-
-  const showCategories =
-    categories &&
-    categories.map((category) => (
-      <div
-        onClick={() =>
-          setCategories((prev) => prev.filter((cat) => cat !== category))
-        }
-        style={{ cursor: "pointer" }}
-        key={Math.random() * 60000}
-      >
-        <HandleBadges category={category} />
-      </div>
-    ));
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setErr("");
     setSuccess("");
-    if (!title || !short || !markdown || !categories || !categories.length) {
+    if (!title || !short || !markdown) {
       setErr("Fill All the fields");
     }
     // if there is an Id then this is the edit form
@@ -118,11 +82,8 @@ const Markdown = ({ location }) => {
         headers: { "content-type": "application/json", authorization: token },
         body: JSON.stringify({
           title,
-          img_url: img,
           short,
           long: markdown,
-          categories,
-          private: checked,
         }),
       })
         .then((res) => res.json())
@@ -150,11 +111,8 @@ const Markdown = ({ location }) => {
       headers: { "content-type": "application/json", authorization: token },
       body: JSON.stringify({
         title,
-        img_url: img,
         short,
         long: markdown,
-        categories,
-        private: checked,
       }),
     })
       .then((res) => res.json())
@@ -186,14 +144,11 @@ const Markdown = ({ location }) => {
             pathname: `/blog/${id}`,
             state: {
               title,
-              img_url: img,
               short,
               long: markdown,
               createdOrUpdated: blog.createdOrUpdated ?? "",
               createdAt: blog.createdAt,
               updatedAt: blog.updatedAt,
-              categories,
-              nonPublic: blog.private === "true",
             },
           }}
           className="btn btn-back"
@@ -228,11 +183,7 @@ const Markdown = ({ location }) => {
               className="form-control"
             />
           </div>
-          <div className="d-flex flex-wrap mt-2 mb-2">{showCategories}</div>
-          <div className="mb-3">
-            <label className="form-label">Categories</label>
-            <input value={tag} onChange={handleTags} />
-          </div>
+
           <div className="form-check form-switch">
             <label className="form-check-label">Private</label>
             <input
@@ -287,11 +238,7 @@ const Markdown = ({ location }) => {
               className="form-control"
             />
           </div>
-          <div className="d-flex flex-wrap mt-2 mb-2">{showCategories}</div>
-          <div className="mb-3">
-            <label className="form-label">Categories</label>
-            <input value={tag} onChange={handleTags} />
-          </div>
+
           <div className="form-check form-switch">
             <label className="form-check-label">Private</label>
             <input

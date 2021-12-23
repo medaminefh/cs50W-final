@@ -11,14 +11,32 @@ from django.views.decorators.csrf import csrf_exempt
 def index(req):
     return JsonResponse({"msg": "Hello World!"})
 
-
+@csrf_exempt
 def tweets(req):
+
+    if req.method == "POST":
+        try:
+            body_unicode = req.body.decode('utf-8')
+            body = json.loads(body_unicode)
+
+            title = body['title']
+            short = body['short']
+            long = body['long']
+            
+            userId = body["userId"]
+            user = User.objects.get(pk=userId)
+            post = Post.objects.create(user=user, title=title,short=short,long=long)
+            post.save()
+            return JsonResponse({"blog": {"id":post.id,"title": post.title, "user": user.username}})
+        except Exception as e:
+            print(f'tweet Post error : {e}')
+            return JsonResponse({"err": "Something wrong happened"})
+    
+
     try:
-        tweets = Post.objects.all()
+        tweets = Post.objects.all().order_by("-updated_at")
         serializer = []
         for tweet in tweets:
-            likes = Like.objects.filter(post = tweet)
-            comments = Comment.objects.filter(post = tweet)
             
             serializer.append(tweet.serialize())
     
@@ -28,30 +46,12 @@ def tweets(req):
         print(f'tweets err : {e}')
 
         return JsonResponse({"err": "Oops something went wrong!"})
-
-@csrf_exempt
-def tweet(req):
-    print("hello Tweet")
-    if req.method == "POST":
-        try:
-            body_unicode = req.body.decode('utf-8')
-            body = json.loads(body_unicode)
-
-            content = body['content']
-            userId = body["userId"]
-            user = User.objects.get(pk=userId)
-            post = Post.objects.create(user=user, content=content)
-            post.save()
-            return JsonResponse({"blog": {"content": post.content, "user": user.username}})
-        except Exception as e:
-            print(f'tweet Post error : {e}')
-            return JsonResponse({"err": "Something wrong happened"})
     
 
 
 @csrf_exempt
 def twt(req,postId):
-    print("hello Twt")
+    print(postId)
     if req.method == "POST":
         try:
 
@@ -96,7 +96,9 @@ def twt(req,postId):
             body_unicode = req.body.decode('utf-8')
             body = json.loads(body_unicode)
 
-            content = body['content']
+            title = body['title']
+            short = body['short']
+            long = body['long']
             userId = body['userId']
 
             
@@ -107,10 +109,12 @@ def twt(req,postId):
                 
                 return JsonResponse({"msg":"Not Allowed to modify others tweets"})
 
-            tweet.content = content
-            tweet.save(update_fields=["content","updated_at"])
+            tweet.title = title
+            tweet.long = long
+            tweet.short = short
+            tweet.save(update_fields=["title", "long", "short" ,"updated_at"])
 
-            return JsonResponse({"msg": "Updated!", "tweet": {"content": tweet.content}})
+            return JsonResponse({"msg": "Updated!"})
 
         except Exception as e:
             print(f'tweet Put error :{e}')
@@ -142,7 +146,7 @@ def twt(req,postId):
         tweet = Post.objects.get(pk=postId)
         tweet = tweet.serialize()
 
-        return JsonResponse({"msg":"succeed",'tweet':tweet})
+        return JsonResponse(tweet)
     except Exception as e:
         print("Err with getting the post",e)
         return JsonResponse({"err":"No post with that Id"})

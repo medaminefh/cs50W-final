@@ -18,20 +18,11 @@ const Blog = ({ match, location }) => {
   const { id } = match.params;
   const { pathname } = location;
   const [blog, setBlog] = useState("");
-  let {
-    title,
-    img_url,
-    short,
-    long,
-    updatedAt,
-    categories,
-    private: nonPublic,
-    counter,
-  } = blog;
+  let { title, short, long, updatedAt } = blog;
   const token = localStorage.token;
 
   useEffect(() => {
-    fetch(`${SERVER_URL}/blogs/${id}`, {
+    fetch(`${SERVER_URL}blogs/${id}`, {
       method: "GET",
       headers: { "content-type": "application/json", authorization: token },
     })
@@ -67,7 +58,7 @@ const Blog = ({ match, location }) => {
       "Are You Sure You want To Delete This?"
     );
     if (confirmation) {
-      fetch(`${SERVER_URL}/blogs/${id}`, {
+      fetch(`${SERVER_URL}blogs/${id}`, {
         method: "DELETE",
         headers: { "content-type": "application/json", authorization: token },
       })
@@ -115,11 +106,9 @@ const Blog = ({ match, location }) => {
                 pathname: `${pathname}/edit`,
                 state: {
                   title,
-                  img_url,
+
                   short,
                   long,
-                  categories,
-                  nonPublic: nonPublic === "true",
                 },
               }}
               className="btn btn-back"
@@ -130,11 +119,11 @@ const Blog = ({ match, location }) => {
         )}
       </div>
       <div className="card card-page">
-        <HandleDate updated={updatedAt} counter={counter} />
+        <HandleDate updated={updatedAt} />
         <div className="post-body">
           <div
             dangerouslySetInnerHTML={{
-              __html: marked(blog.long),
+              __html: marked(blog.long || ""),
             }}
           />
         </div>
