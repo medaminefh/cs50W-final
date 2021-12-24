@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
-def index(req):
+def index(_):
     return JsonResponse({"msg": "Hello World!"})
 
 @csrf_exempt
@@ -40,7 +40,6 @@ def tweets(req):
             
             serializer.append(tweet.serialize())
     
-        print("hello Tweets",serializer)
         return JsonResponse({"msg": "Succeed", "blogs": serializer})
     except Exception as e:
         print(f'tweets err : {e}')
@@ -51,47 +50,7 @@ def tweets(req):
 
 @csrf_exempt
 def twt(req,postId):
-    print(postId)
-    if req.method == "POST":
-        try:
-
-            body_unicode = req.body.decode('utf-8')
-            body = json.loads(body_unicode)
-
-            userId = body['userId']
-            comment = body['comment']
-            like = body['like']
-
-            user = User.objects.get(pk = userId)
-
-            tweet = Post.objects.get(pk = postId)
-            
-            if like:
-
-                try:
-                    tweetLiked = Like.objects.get(post=tweet, user=user)
-                except:
-                    tweetLiked = None
-
-                if tweetLiked:
-                    tweetLiked.delete()
-                    return JsonResponse({"Success": "Disliked"}, status=200)
-                
-                tweetLiked = Like.objects.create(user=user, tweet=tweet)
-                tweetLiked.save()
-
-            if comment:
-                comment = Comment.objects.create(user = user , post = tweet, comment=comment)
-                comment.save()
-            
-            
-
-            return JsonResponse({"Success": "Liked Succussfully"}, status=200)
-            pass
-        except Exception as e:
-            print("Err with like or commenting a post",e)
-            return JsonResponse({"err":"Oops something went wrong!"})
-    if req.method == "PUT":
+    if req.method == "PATCH":
         try:
             body_unicode = req.body.decode('utf-8')
             body = json.loads(body_unicode)

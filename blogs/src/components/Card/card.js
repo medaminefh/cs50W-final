@@ -2,24 +2,13 @@ import { Link } from "react-router-dom";
 
 export default function Card({
   id,
-  nonPublic,
   updatedAt,
   short,
   title,
   handleDate: HandleDate,
 }) {
-  const token = localStorage.token;
-
   return (
-    <div
-      className={
-        token && nonPublic
-          ? "card private "
-          : token && !nonPublic
-          ? "card public"
-          : "card"
-      }
-    >
+    <div className={"card"}>
       <HandleDate updated={updatedAt} />
 
       <h3>{title}</h3>

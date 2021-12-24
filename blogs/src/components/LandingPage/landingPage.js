@@ -48,11 +48,9 @@ const LandingPage = () => {
   return Blogs ? (
     <>
       <div className="container d-flex w-100 justify-content-between align-items-center">
-        {token && (
-          <Link to={"/blog/create"} className="btn btn-primary">
-            Create
-          </Link>
-        )}
+        <Link to={"/blog/create"} className="btn btn-primary">
+          Create
+        </Link>
       </div>
       <SmoothList delay={130} className="posts mb-5">
         {showBlogs}

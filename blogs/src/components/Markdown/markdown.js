@@ -10,21 +10,13 @@ import HandleBadges from "../utils/handlebadges";
 const Markdown = ({ location }) => {
   const [err, setErr] = useState("");
   const [success, setSuccess] = useState("");
-  const [checked, setChecked] = useState(true);
-  const [tag, setTag] = useState([]);
-
-  const handleChecked = () => {
-    setChecked((prev) => !prev);
-  };
 
   let history = useHistory();
-  const token = localStorage.token;
   const SERVER_URL =
     process.env.NODE_ENV === "development"
       ? "http://localhost:8000/"
       : process.env.REACT_APP_SERVER_URL;
   const [title, setTitle] = useState("");
-  const [img, setImg] = useState("");
   const [short, setShort] = useState("");
   const { state } = location;
   const [blog, setBlog] = useState(state);
@@ -37,19 +29,15 @@ const Markdown = ({ location }) => {
         .then((res) => res.json())
         .then((data) => {
           setBlog(data);
-          setImg(data.img_url);
           setTitle(data.title);
           setShort(data.short);
           setMarkdown(data.long);
-          setChecked(data.private === true);
         });
     } else if (state && id) {
       setBlog(state);
-      setImg(state.img_url);
       setTitle(state.title);
       setShort(state.short);
       setMarkdown(state.long);
-      setChecked(state.nonPublic);
     }
   }, []);
   const markdownChange = (newValue) => {
@@ -58,10 +46,6 @@ const Markdown = ({ location }) => {
 
   const titleChange = (e) => {
     setTitle(e.target.value);
-  };
-
-  const imgChange = (e) => {
-    setImg(e.target.value);
   };
 
   const shortChange = (e) => {
@@ -77,10 +61,11 @@ const Markdown = ({ location }) => {
     }
     // if there is an Id then this is the edit form
     if (id) {
-      fetch(`${SERVER_URL}/blogs/${id}`, {
+      fetch(`${SERVER_URL}blogs/${id}`, {
         method: "PATCH",
-        headers: { "content-type": "application/json", authorization: token },
+        headers: { "content-type": "application/json" },
         body: JSON.stringify({
+          userId: "1",
           title,
           short,
           long: markdown,
@@ -96,7 +81,7 @@ const Markdown = ({ location }) => {
           }
           setErr("");
           setSuccess(data.msg);
-          history.push(`/blog/${id}`);
+          history.push(`/`);
         })
         .catch((err) => {
           setSuccess("");
@@ -106,10 +91,11 @@ const Markdown = ({ location }) => {
       return;
     }
 
-    fetch(`${SERVER_URL}/blogs`, {
+    fetch(`${SERVER_URL}blogs/`, {
       method: "POST",
-      headers: { "content-type": "application/json", authorization: token },
+      headers: { "content-type": "application/json" },
       body: JSON.stringify({
+        userId: "1",
         title,
         short,
         long: markdown,
@@ -174,25 +160,6 @@ const Markdown = ({ location }) => {
               className="form-control"
             />
           </div>
-          <div className="mb-3">
-            <label className="form-label">Img Url</label>
-            <input
-              value={img}
-              onChange={imgChange}
-              type="text"
-              className="form-control"
-            />
-          </div>
-
-          <div className="form-check form-switch">
-            <label className="form-check-label">Private</label>
-            <input
-              checked={checked}
-              onChange={handleChecked}
-              className="form-check-input"
-              type="checkbox"
-            />
-          </div>
           <SimpleMDE value={markdown} onChange={markdownChange} />
           <button type="submit" className="btn btn-primary">
             Submit
@@ -229,25 +196,7 @@ const Markdown = ({ location }) => {
               className="form-control"
             />
           </div>
-          <div className="mb-3">
-            <label className="form-label">Img Url</label>
-            <input
-              value={img}
-              onChange={imgChange}
-              type="text"
-              className="form-control"
-            />
-          </div>
 
-          <div className="form-check form-switch">
-            <label className="form-check-label">Private</label>
-            <input
-              checked={checked}
-              onChange={handleChecked}
-              className="form-check-input"
-              type="checkbox"
-            />
-          </div>
           <SimpleMDE value={markdown} onChange={markdownChange} />
           <button type="submit" className="btn btn-primary">
             Submit

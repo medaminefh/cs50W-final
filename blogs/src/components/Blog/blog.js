@@ -19,12 +19,11 @@ const Blog = ({ match, location }) => {
   const { pathname } = location;
   const [blog, setBlog] = useState("");
   let { title, short, long, updatedAt } = blog;
-  const token = localStorage.token;
 
   useEffect(() => {
     fetch(`${SERVER_URL}blogs/${id}`, {
       method: "GET",
-      headers: { "content-type": "application/json", authorization: token },
+      headers: { "content-type": "application/json" },
     })
       .then((res) => res.json())
       .then((data) => {
@@ -42,10 +41,6 @@ const Blog = ({ match, location }) => {
             behavior: "smooth",
           });
         }, "3s");
-
-        if (token) {
-          setBlog((prev) => ({ ...prev, token }));
-        }
       })
       .catch((err) => {
         console.log(err);
@@ -60,7 +55,10 @@ const Blog = ({ match, location }) => {
     if (confirmation) {
       fetch(`${SERVER_URL}blogs/${id}`, {
         method: "DELETE",
-        headers: { "content-type": "application/json", authorization: token },
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          userId: "1",
+        }),
       })
         .then((res) => res.json())
         .then((data) => {
@@ -88,35 +86,34 @@ const Blog = ({ match, location }) => {
         <Link to="/" className="btn btn-back">
           Go Back
         </Link>
-        {token && (
-          <div className="w-25 d-flex justify-content-between">
-            <button
-              onClick={handleRemove}
-              style={{
-                backgroundColor: "rgba(214, 10, 10, 0.712)",
-                color: "#fff",
-              }}
-              className="btn btn-back"
-            >
-              Delete
-            </button>
 
-            <Link
-              to={{
-                pathname: `${pathname}/edit`,
-                state: {
-                  title,
+        <div className="w-25 d-flex justify-content-between">
+          <button
+            onClick={handleRemove}
+            style={{
+              backgroundColor: "rgba(214, 10, 10, 0.712)",
+              color: "#fff",
+            }}
+            className="btn btn-back"
+          >
+            Delete
+          </button>
 
-                  short,
-                  long,
-                },
-              }}
-              className="btn btn-back"
-            >
-              Edit
-            </Link>
-          </div>
-        )}
+          <Link
+            to={{
+              pathname: `${pathname}/edit`,
+              state: {
+                title,
+
+                short,
+                long,
+              },
+            }}
+            className="btn btn-back"
+          >
+            Edit
+          </Link>
+        </div>
       </div>
       <div className="card card-page">
         <HandleDate updated={updatedAt} />
