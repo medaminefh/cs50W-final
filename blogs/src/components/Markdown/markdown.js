@@ -5,7 +5,6 @@ import { Link, useParams, useHistory } from "react-router-dom";
 import Loading from "../utils/loading";
 import { showErrMsg } from "../utils/notification";
 import { showSuccessMsg } from "../utils/notification";
-import HandleBadges from "../utils/handlebadges";
 
 const Markdown = ({ location }) => {
   const [err, setErr] = useState("");
@@ -127,7 +126,7 @@ const Markdown = ({ location }) => {
         {success && showSuccessMsg(success)}
         <Link
           to={{
-            pathname: `/blog/${id}`,
+            pathname: `/blogs/${id}`,
             state: {
               title,
               short,
