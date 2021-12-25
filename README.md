@@ -79,7 +79,7 @@ So we need first to install all the packages needed for this app to work properl
 
 4- pick one of the Terminals and cd to **`blogs`** folder (This is where the frontend live) and run `npm i` (This will install all the frontend packages).
 
-5- Go the other Terminal and run
+5- Go to the other Terminal and run
 
 `pip install -r requirements.txt`
 
