@@ -113,6 +113,6 @@ or
 <br>
 <br>
 
-## And after that I want to Thank All the CS50 staff and Happy New Year to All of you for making this Great Content availbe for Free, Thank you so Much 🌹
+## In the End I've finally complete it, I'm so Happy with that, I want to Thank All the CS50 staff and Happy New Year to All of you for making this Great Content availbe for Free, Thank you so Much 🌹. <br> And I'm Ready and so excited for the next challenges 💪 Let's Goo
 
 ![Happy new Year](https://i.pinimg.com/originals/8f/27/d4/8f27d444c9b922eb5b8d17339a140638.gif)
