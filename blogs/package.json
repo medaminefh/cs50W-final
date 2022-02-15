@@ -9,7 +9,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "easymde": "^2.15.0",
-    "marked": "^3.0.4",
+    "marked": "^4.0.10",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-google-login": "^5.2.2",
